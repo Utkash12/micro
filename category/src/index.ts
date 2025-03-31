@@ -1,3 +1,4 @@
+require('newrelic');
 import {ApplicationConfig, CategoryApplication} from './application';
 
 export * from './application';

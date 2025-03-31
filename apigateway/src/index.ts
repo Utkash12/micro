@@ -1,3 +1,4 @@
+require('newrelic');
 import {ApplicationConfig, ApigatewayApplication} from './application';
 
 export * from './application';
