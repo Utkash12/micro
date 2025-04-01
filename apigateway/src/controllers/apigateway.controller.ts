@@ -1,18 +1,33 @@
 import {get, post, patch, put, del, requestBody, param} from '@loopback/rest';
+import {inject} from '@loopback/core';
 import axios from 'axios';
 import {BookValidator} from '../validations/validate-book';
 import {AuthorValidator} from '../validations/validate-author';
 import {CategoryValidator} from '../validations/validate-category';
+import { AuthService } from '../services/auth.service';
+// import {AuthService} from '../services/auth-service.service';
+
 
 export class ApiGatewayController {
   private bookServiceUrl = 'http://127.0.0.1:3001';
   private authorServiceUrl = 'http://127.0.0.1:3002';
   private categoryServiceUrl = 'http://127.0.0.1:3003';
   private bookValidator = BookValidator.getInstance();
-  
-  constructor() {}
 
-  //Books endpoints
+  constructor(
+    @inject('services.AuthService') private authService: AuthService, // Inject AuthService here
+  ) {}
+  @post('/signup')
+  async signup(@requestBody() user: any) {
+    return this.authService.signup(user);
+  }
+
+  @post('/login')
+  async login(@requestBody() credentials: any) {
+    return this.authService.login(credentials);
+  }
+
+  // Books endpoints
   @post('/books')
   async createBook(@requestBody() book: any) {
     try {
@@ -24,8 +39,6 @@ export class ApiGatewayController {
     const response = await axios.post(`${this.bookServiceUrl}/books`, book);
     return response.data;
   }
-
-
 
   @get('/books')
   async getBooks() {
@@ -71,7 +84,6 @@ export class ApiGatewayController {
     return response.data;
   }
 
-
   @del('/books/{id}')
   async deleteBookById(@param.path.string('id') id: string) {
     const response = await axios.delete(`${this.bookServiceUrl}/books/${id}`);
@@ -104,9 +116,9 @@ export class ApiGatewayController {
   @post('/authors')
   async createAuthor(@requestBody() author: any) {
     try {
-      AuthorValidator.getInstance().validate(author); // Validate using the singleton instance
+      AuthorValidator.getInstance().validate(author);
     } catch (error) {
-      throw error; // If validation fails, throw the error
+      throw error;
     }
     const response = await axios.post(
       `${this.authorServiceUrl}/authors`,
@@ -117,8 +129,6 @@ export class ApiGatewayController {
 
   @get('/authors')
   async getAllAuthors() {
-    // console.log(1234); // Debugging
-  
     try {
       const response = await axios.get(`${this.authorServiceUrl}/authors`);
       return response.data;
@@ -128,7 +138,6 @@ export class ApiGatewayController {
       return { error: 'Failed to fetch authors', details: error.message };
     }
   }
-  
 
   @get('/authors/{id}')
   async getAuthorById(@param.path.string('id') id: string) {
@@ -157,13 +166,12 @@ export class ApiGatewayController {
   }
 
   // Categories endpoints
-
   @post('/categories')
   async createCategory(@requestBody() category: any) {
     try {
-      CategoryValidator.getInstance().validate(category); // Validate using the singleton instance
+      CategoryValidator.getInstance().validate(category);
     } catch (error) {
-      throw error; // If validation fails, throw the error
+      throw error;
     }
     const response = await axios.post(
       `${this.categoryServiceUrl}/categories`,

@@ -9,6 +9,9 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import {AuthService} from './services';
+import { AuthInterceptor } from './interceptors';
+// import {AuthInterceptor} from './interceptors/auth.interceptor';  
 
 export {ApplicationConfig};
 
@@ -17,6 +20,12 @@ export class ApigatewayApplication extends BootMixin(
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
+
+    
+    this.bind('services.AuthService').toClass(AuthService);
+
+    
+    this.interceptor(AuthInterceptor);
 
     // Set up the custom sequence
     this.sequence(MySequence);
@@ -42,3 +51,4 @@ export class ApigatewayApplication extends BootMixin(
     };
   }
 }
+
