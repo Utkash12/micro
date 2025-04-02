@@ -69,11 +69,11 @@ export class ApiGatewayController {
     }
     const response = await axios.post(`${this.bookServiceUrl}`, book);
     console.log("Response",response.data);
-    // this.client.index({
-    //       index: 'books',
-    //       id:book.bookId,
-    //       body: book,
-    //     })
+    this.client.index({
+          index: 'books',
+          id:book.bookId,
+          body: book,
+        })
     return response.data;
   }
 
@@ -255,7 +255,7 @@ export class ApiGatewayController {
   @get('/search/book')
   async searchBook(@param.query.string('q') query: string){
     const response= await this.client.search({
-      index:'book',
+      index:'books',
       body:{
         query:{
           match:{'bookTitle.keyword':query},
