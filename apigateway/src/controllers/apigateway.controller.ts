@@ -63,15 +63,17 @@ export class ApiGatewayController {
   async createBook(@requestBody() book: any) {
     try {
       const res = await this.bookValidator.validate(book);
-      console.log("Res",res);
-      
     } catch (error) {
       console.error('Validation failed:', error.message);
       throw error;
     }
     const response = await axios.post(`${this.bookServiceUrl}`, book);
     console.log("Response",response.data);
-    
+    // this.client.index({
+    //       index: 'books',
+    //       id:book.bookId,
+    //       body: book,
+    //     })
     return response.data;
   }
 
