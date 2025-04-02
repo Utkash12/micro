@@ -1,4 +1,5 @@
 'use strict';
+require('dotenv').config();
 
 exports.config = {
   app_name: ['book'], // Replace with the service name, e.g., 'BookServices', 'bms-api-gateway'
