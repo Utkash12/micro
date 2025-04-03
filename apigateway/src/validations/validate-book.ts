@@ -4,8 +4,8 @@ import axios from 'axios';
 
 export class BookValidator {
   private static instance: BookValidator;
-  private authorServiceUrl = 'http://localhost:3002';
-  private categoryServiceUrl = 'http://localhost:3003';
+  private authorServiceUrl = 'http://127.0.0.1:3002/authors';
+  private categoryServiceUrl = 'http://127.0.0.1:3003/categories';
 
   // Private constructor to prevent instantiation
   private constructor() {}
@@ -14,19 +14,24 @@ export class BookValidator {
   private async fetchAuthor(authorId: string) {
     try {
       const response = await axios.get(
-        `${this.authorServiceUrl}/authors/${authorId}`,
+        `${this.authorServiceUrl}/${authorId}`
       );
       return response.data || null;
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response) {
+        // console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      }
       return null;
     }
   }
+  
 
   // Method to fetch category by ID
   private async fetchCategory(categoryId: string) {
     try {
       const response = await axios.get(
-        `${this.categoryServiceUrl}/categories/${categoryId}`,
+        `${this.categoryServiceUrl}/${categoryId}`,
       );
       return response.data || null;
     } catch (error) {
@@ -84,7 +89,11 @@ export class BookValidator {
     }
 
     // Check if author exists
+    // console.log("bookAuthorId",book.bookAuthorId);
+    
     const author = await this.fetchAuthor(book.bookAuthorId);
+    // console.log("Author",author);
+    
     if (!author) {
       throw new HttpErrors.BadRequest(
         `Author with ID ${book.bookAuthorId} not found`,
